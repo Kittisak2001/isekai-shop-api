@@ -1,0 +1,35 @@
+server:
+  port: xxxx
+  allowOrigins:
+    - "xxxx"
+  bodyLimit: "xxxx" # MiB
+  timeout: xxxx # Seconds
+ 
+oauth2:
+  playerRedirectUrl: "xxxx"
+  adminRedirectUrl: "xxxx"
+  clientId: "xxxx"
+  clientSecret: "xxxx"
+  endpoints:
+    authUrl: "xxxx"
+    tokenUrl: "xxxx"
+    deviceAuthUrl: "xxxx"
+  scopes:
+    - "xxxx"
+    - "xxxx"
+  userInfoUrl: "xxxx"
+  revokeUrl: "xxxx"
+
+state:
+  secret: "xxxx"
+  timeout: xxxx #Seconds
+  issuer: "xxxx"
+  
+database:
+  host: xxxx
+  port: xxxx
+  user: xxxx
+  password: xxxx
+  dbname: xxxx
+  sslmode: xxxx
+  schema: xxxx
