@@ -13,15 +13,15 @@ type (
 	Config struct {
 		Server   *ServerCfg   `mapstructure:"server" validate:"required"`
 		OAuth2   *OAuth2Cfg   `mapstructure:"oauth2" validate:"required"`
-		State    *StateCfg   `mapstructure:"state" validate:"required"`
+		State    *StateCfg    `mapstructure:"state" validate:"required"`
 		Database *DatabaseCfg `mapstructure:"database" validate:"required"`
 	}
 
 	ServerCfg struct {
-		Port           int           `mapstructure:"port" validate:"required"`
-		AllowedOrigins []string      `mapstructure:"allowOrigins" validate:"required"`
-		BodyLimit      string        `mapstructure:"bodyLimit" validate:"required"`
-		Timeout        time.Duration `mapstructure:"timeout" validate:"required"`
+		Port         int           `mapstructure:"port" validate:"required"`
+		AllowOrigins []string      `mapstructure:"allowOrigins" validate:"required"`
+		BodyLimit    string        `mapstructure:"bodyLimit" validate:"required"`
+		Timeout      time.Duration `mapstructure:"timeout" validate:"required"`
 	}
 	OAuth2Cfg struct {
 		PlayerRedirectUrl string `mapstructure:"playerRedirectUrl" validate:"required"`
@@ -55,28 +55,28 @@ type (
 )
 
 var (
-	once sync.Once
+	once           sync.Once
 	configInstance *Config
 )
 
-func ConfigGetting() *Config{
-	once.Do(func(){
+func ConfigGetting() *Config {
+	once.Do(func() {
 		viper.SetConfigName("config")
 		viper.SetConfigType("yaml")
 		viper.AddConfigPath("./config")
 		viper.AutomaticEnv()
 		viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_")) // server.port -> SERVER_PORT
 
-		if err := viper.ReadInConfig(); err != nil{
+		if err := viper.ReadInConfig(); err != nil {
 			panic(err)
 		}
 
-		if err := viper.Unmarshal(&configInstance); err != nil{
+		if err := viper.Unmarshal(&configInstance); err != nil {
 			panic(err)
 		}
 
 		validate := validator.New()
-		if err := validate.Struct(configInstance); err != nil{
+		if err := validate.Struct(configInstance); err != nil {
 			panic(err)
 		}
 	})
