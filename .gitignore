@@ -23,6 +23,9 @@
 
 # Go workspace file
 go.work
+
+# optional
 config.yaml
+.air.toml
 
 # End of https://www.toptal.com/developers/gitignore/api/go
