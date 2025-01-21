@@ -6,6 +6,5 @@ import (
 )
 
 type ItemShopRepository interface {
-	Listing(itemFilter *_itemShopModel.ItemFilter) ([]*entities.Item, error)
-	Counting(itemFilter *_itemShopModel.ItemFilter) (*int64, error)
+	Listing(itemFilter *_itemShopModel.ItemFilter) (*int64,[]*entities.Item, error)
 }
