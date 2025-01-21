@@ -3,10 +3,13 @@ package databases
 import (
 	"fmt"
 	"log"
+	"os"
 	"sync"
+	"time"
 	"github.com/Kittisak2001/isekai-shop-api/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type postgresDatabase struct {
@@ -20,10 +23,21 @@ var (
 
 func NewPostgresDatabase(conf *config.DatabaseCfg) Database {
 	once.Do(func() {
+		newLogger := logger.New(
+			log.New(os.Stdout, "\r\n", log.LstdFlags), // Writer
+			logger.Config{
+				SlowThreshold: time.Second, // เวลาที่ถือว่าช้า
+				LogLevel:      logger.Info, // ระดับ Log
+				Colorful:      true,        // ใช้สีใน log
+			},
+		)
+
 		dns := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s search_path=%s",
 			conf.Host, conf.Port, conf.User, conf.Password, conf.DBName, conf.SSLMode, conf.Schema,
 		)
-		conn, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
+		conn, err := gorm.Open(postgres.Open(dns), &gorm.Config{
+			Logger: newLogger,
+		})
 		if err != nil {
 			panic(err)
 		}
