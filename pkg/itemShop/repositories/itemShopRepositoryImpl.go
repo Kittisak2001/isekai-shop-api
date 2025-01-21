@@ -14,7 +14,7 @@ func NewItemShopRepositoryImpl(db *gorm.DB) ItemShopRepository {
 	return &itemShopRepositoryImpl{db}
 }
 
-func (r *itemShopRepositoryImpl) Listing(itemFilter *_itemShopModel.ItemFilter) (*int64,[]*entities.Item, error) {
+func (r *itemShopRepositoryImpl) Listing(itemFilter *_itemShopModel.ItemFilter) ([]*entities.Item, error) {
 	itemList := make([]*entities.Item, 0)
 	query := r.db.Model(&entities.Item{}).Where("is_archive = ?", false) // SELECT * FROM items
 	name := itemFilter.Name
@@ -25,14 +25,10 @@ func (r *itemShopRepositoryImpl) Listing(itemFilter *_itemShopModel.ItemFilter) 
 	if description != ""{
 		query = query.Where("description like ?", "%"+description+"%") // WHERE description LIKE %..%
 	}
-	count := new(int64)
-	if err := query.Count(count).Error; err != nil {
-		return nil,nil, err
-	}
 	offset := int((itemFilter.Page - 1) * itemFilter.Size)
 	limit := int(itemFilter.Size)
 	if err := query.Offset(offset).Limit(limit).Order("id asc").Find(&itemList).Error; err != nil {
-		return nil,nil, err
+		return nil, err
 	}
-	return count, itemList, nil
+	return itemList, nil
 }
