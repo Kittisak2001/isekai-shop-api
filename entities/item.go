@@ -1,6 +1,9 @@
 package entities
 
-import "time"
+import (
+	"time"
+	_itemShopModel "github.com/Kittisak2001/isekai-shop-api/pkg/itemShop/model"
+)
 
 type (
 	Item struct {
@@ -15,3 +18,13 @@ type (
 		UpdatedAt   time.Time `gorm:"not null;autoUpdateTime;"`
 	}
 )
+
+func (i *Item) ToItemModel() *_itemShopModel.Item {
+	return &_itemShopModel.Item{
+		ID:          i.ID,
+		Name:        i.Name,
+		Description: i.Description,
+		Price:       i.Price,
+		Picture:     i.Picture,
+	}
+}
