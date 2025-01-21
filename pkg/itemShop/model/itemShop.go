@@ -5,7 +5,7 @@ type (
 		ID          uint64 `json:"id"`
 		Name        string `json:"name"`
 		Description string `json:"description"`
-		Price       int    `json:"price"`
+		Price       uint    `json:"price"`
 		Picture     string `json:"picture"`
 	}
 

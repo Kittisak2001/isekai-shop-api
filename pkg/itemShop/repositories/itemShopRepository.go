@@ -7,4 +7,5 @@ import (
 
 type ItemShopRepository interface {
 	Listing(itemFilter *_itemShopModel.ItemFilter) ([]*entities.Item, error)
+	FindById(itemID *uint64) (*entities.Item, error)
 }

@@ -9,7 +9,7 @@ import (
 
 func main() {
 	conf := config.ConfigGetting()
-	db := databases.NewPostgresDatabase(conf.Database).ConnectionGetting()
+	db := databases.NewPostgresDatabase(conf.Database).Connect()
 	tx := db.Begin()
 	defer tx.Rollback()
 

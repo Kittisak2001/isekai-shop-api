@@ -6,6 +6,7 @@ import (
 	"os"
 	"sync"
 	"time"
+
 	"github.com/Kittisak2001/isekai-shop-api/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -24,7 +25,7 @@ var (
 func NewPostgresDatabase(conf *config.DatabaseCfg) Database {
 	once.Do(func() {
 		newLogger := logger.New(
-			log.New(os.Stdout, "\r\n", log.LstdFlags), 
+			log.New(os.Stdout, "\r\n", log.LstdFlags),
 			logger.Config{
 				SlowThreshold: time.Second,
 				LogLevel:      logger.Info,
@@ -47,6 +48,6 @@ func NewPostgresDatabase(conf *config.DatabaseCfg) Database {
 	return postgresDatabaseInstance
 }
 
-func (db *postgresDatabase) ConnectionGetting() *gorm.DB {
+func (db *postgresDatabase) Connect() *gorm.DB {
 	return db.DB
 }

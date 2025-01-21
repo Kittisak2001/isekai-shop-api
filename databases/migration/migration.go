@@ -11,10 +11,10 @@ func main() {
 	conf := config.ConfigGetting()
 	db := databases.NewPostgresDatabase(conf.Database)
 
-	tx := db.ConnectionGetting().Begin()
+	tx := db.Connect().Begin()
 	defer tx.Rollback()
-	
-	if err := tx.Debug().AutoMigrate(&entities.Item{}); err != nil{
+
+	if err := tx.Debug().AutoMigrate(&entities.Item{}); err != nil {
 		panic(err)
 	}
 	// playerCoinMigration(tx)
@@ -23,7 +23,7 @@ func main() {
 	// playerMigration(tx)
 	// adminMigration(tx)
 	// itemMigration(tx)
-	if err :=	tx.Commit().Error; err != nil{
+	if err := tx.Commit().Error; err != nil {
 		panic(err)
 	}
 }
