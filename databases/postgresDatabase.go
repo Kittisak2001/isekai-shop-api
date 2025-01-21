@@ -24,11 +24,11 @@ var (
 func NewPostgresDatabase(conf *config.DatabaseCfg) Database {
 	once.Do(func() {
 		newLogger := logger.New(
-			log.New(os.Stdout, "\r\n", log.LstdFlags), // Writer
+			log.New(os.Stdout, "\r\n", log.LstdFlags), 
 			logger.Config{
-				SlowThreshold: time.Second, // เวลาที่ถือว่าช้า
-				LogLevel:      logger.Info, // ระดับ Log
-				Colorful:      true,        // ใช้สีใน log
+				SlowThreshold: time.Second,
+				LogLevel:      logger.Info,
+				Colorful:      true,
 			},
 		)
 
