@@ -8,6 +8,6 @@ type (
 	}
 )
 
-func Error(pctx echo.Context, statusCode int, message string) error {
-	return pctx.JSON(statusCode, &errorMessage{Message: message})
+func Error(pctx echo.Context, statusCode int, err error) error {
+	return pctx.JSON(statusCode, &errorMessage{Message: err.Error()})
 }
