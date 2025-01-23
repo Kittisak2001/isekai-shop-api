@@ -20,11 +20,6 @@ oauth2:
   userInfoUrl: "xxxx"
   revokeUrl: "xxxx"
 
-state:
-  secret: "xxxx"
-  timeout: xxxx #Seconds
-  issuer: "xxxx"
-  
 database:
   host: xxxx
   port: xxxx
