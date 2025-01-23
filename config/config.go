@@ -13,7 +13,6 @@ type (
 	Config struct {
 		Server   *ServerCfg   `mapstructure:"server" validate:"required"`
 		OAuth2   *OAuth2Cfg   `mapstructure:"oauth2" validate:"required"`
-		State    *StateCfg    `mapstructure:"state" validate:"required"`
 		Database *DatabaseCfg `mapstructure:"database" validate:"required"`
 	}
 
@@ -36,12 +35,6 @@ type (
 		Scopes      []string `mapstructure:"scopes" validate:"required"`
 		UserInfoUrl string   `mapstructure:"userInfoUrl" validate:"required"`
 		RevokeUrl   string   `mapstructure:"revokeUrl" validate:"required"`
-	}
-
-	StateCfg struct {
-		Secret  string        `mapstructure:"secret" validate:"required"`
-		Timeout time.Duration `mapstructure:"timeout" validate:"required"`
-		Issuer  string        `mapstructure:"issuer" validate:"required"`
 	}
 	DatabaseCfg struct {
 		Host     string `mapstructure:"host" validate:"required"`
