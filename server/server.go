@@ -43,6 +43,7 @@ func NewEchoServer(conf *config.Config, db databases.Database) *echoServer {
 func (s *echoServer) Start() {
 	corsMiddleware := getCORSMiddleware(s.conf.Server.AllowOrigins)
 	timeOutMiddleware := getTimeOutMiddleware(s.conf.Server.Timeout)
+	oAuth2Middleware := s.initOAuth2Middleware()
 
 	s.app.Use(middleware.Recover())
 	s.app.Use(middleware.Logger())
@@ -57,9 +58,9 @@ func (s *echoServer) Start() {
 	})
 
 	s.initItemShopRouter()
-	s.initItemManagingRouter()
+	s.initItemManagingRouter(oAuth2Middleware)
 	s.initOAuth2Router()
-
+	
 	quitCh := make(chan os.Signal, 1)
 	signal.Notify(quitCh, syscall.SIGINT, syscall.SIGTERM)
 	go s.gracefullyShutdown(quitCh)
