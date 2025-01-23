@@ -1,7 +1,7 @@
 package model
 
 type UserInfo struct {
-	Sub            string `json:"sub"`
+	ID            string `json:"sub"`
 	Email         string `json:"email"`
 	VerifiedEmail bool   `json:"verified_email"`
 	Name          string `json:"name"`

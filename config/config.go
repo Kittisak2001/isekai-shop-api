@@ -2,11 +2,10 @@ package config
 
 import (
 	"strings"
-	"sync"
 	"time"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
+	"golang.org/x/oauth2"
 )
 
 type (
@@ -47,11 +46,6 @@ type (
 	}
 )
 
-var (
-	once           sync.Once
-	configInstance *Config
-)
-
 func ConfigGetting() *Config {
 	once.Do(func() {
 		viper.SetConfigName("config")
@@ -72,6 +66,36 @@ func ConfigGetting() *Config {
 		if err := validate.Struct(configInstance); err != nil {
 			panic(err)
 		}
+
+		setGoogleOAuth2Config(configInstance.OAuth2)
 	})
 	return configInstance
+}
+
+func setGoogleOAuth2Config(oauth2Conf *OAuth2Cfg) {
+	PlayerGoogleOAuth2 = &oauth2.Config{
+		ClientID:     oauth2Conf.ClientID,
+		ClientSecret: oauth2Conf.ClientSecret,
+		RedirectURL:  oauth2Conf.PlayerRedirectUrl,
+		Scopes:       oauth2Conf.Scopes,
+		Endpoint: oauth2.Endpoint{
+			AuthURL:       oauth2Conf.Endpoints.AuthUrl,
+			TokenURL:      oauth2Conf.Endpoints.TokenUrl,
+			DeviceAuthURL: oauth2Conf.Endpoints.DeviceAuthUrl,
+			AuthStyle:     oauth2.AuthStyleInParams,
+		},
+	}
+
+	AdminGoogleOAuth2 = &oauth2.Config{
+		ClientID:     oauth2Conf.ClientID,
+		ClientSecret: oauth2Conf.ClientSecret,
+		RedirectURL:  oauth2Conf.AdminRedirectUrl,
+		Scopes:       oauth2Conf.Scopes,
+		Endpoint: oauth2.Endpoint{
+			AuthURL:       oauth2Conf.Endpoints.AuthUrl,
+			TokenURL:      oauth2Conf.Endpoints.TokenUrl,
+			DeviceAuthURL: oauth2Conf.Endpoints.DeviceAuthUrl,
+			AuthStyle:     oauth2.AuthStyleInParams,
+		},
+	}
 }
