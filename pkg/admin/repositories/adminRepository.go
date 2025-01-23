@@ -1,4 +1,4 @@
-package repository
+package repositories
 
 import "github.com/Kittisak2001/isekai-shop-api/entities"
 

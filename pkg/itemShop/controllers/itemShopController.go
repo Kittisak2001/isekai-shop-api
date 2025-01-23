@@ -19,11 +19,11 @@ func NewItemShopControllerImpl(itemShopService _itemShopService.ItemShopService)
 func (c *itemShopControllerImpl) Listing(pctx echo.Context) error {
 	itemFilter := new(_itemShopModel.ItemFilter)
 	if err := _custom.NewEchoRequest(pctx).Bind(itemFilter); err != nil {
-		return _custom.Error(pctx, http.StatusBadRequest, err.Error())
+		return _custom.Error(pctx, http.StatusBadRequest, err)
 	}
 	itemModelList, err := c.itemShopService.Listing(itemFilter)
 	if err != nil {
-		return _custom.Error(pctx, http.StatusInternalServerError, err.Error())
+		return _custom.Error(pctx, http.StatusInternalServerError, err)
 	}
 	return pctx.JSON(http.StatusOK, itemModelList)
 }

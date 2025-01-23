@@ -1,20 +1,18 @@
-package repository
+package repositories
 
 import (
 	"github.com/Kittisak2001/isekai-shop-api/databases"
 	"github.com/Kittisak2001/isekai-shop-api/entities"
-	"github.com/labstack/echo/v4"
 )
 
 type (
 	adminRepositoryImpl struct {
 		db     databases.Database
-		logger echo.Logger
 	}
 )
 
-func NewAdminRepositoryImpl(db databases.Database, logger echo.Logger) AdminRepository {
-	return &adminRepositoryImpl{db, logger}
+func NewAdminRepositoryImpl(db databases.Database) AdminRepository {
+	return &adminRepositoryImpl{db}
 }
 
 func (r *adminRepositoryImpl) Creating(adminEntity *entities.Admin) (*entities.Admin, error) {
