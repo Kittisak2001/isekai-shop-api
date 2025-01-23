@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"io"
-	"net/http"
 
 	"github.com/Kittisak2001/isekai-shop-api/entities"
 	_adminRepository "github.com/Kittisak2001/isekai-shop-api/pkg/admin/repositories"
@@ -28,7 +27,7 @@ func NewGoogleOAuth2Service(playerRepository _playerRepository.PlayerRepository,
 }
 
 func (s *googleOAuth2Service) PlayerAccountCreating(userInfo *_oAuth2Model.UserInfo) error {
-	playerID := userInfo.Sub
+	playerID := userInfo.ID
 	if !s.isThisGuyIsPlayerReally(playerID) {
 		playerEntity := &entities.Player{
 			ID:     playerID,
@@ -55,7 +54,7 @@ func (s *googleOAuth2Service) isThisGuyIsPlayerReally(playerID string) bool {
 }
 
 func (s *googleOAuth2Service) AdminAccountCreating(userInfo *_oAuth2Model.UserInfo) error {
-	adminID := userInfo.Sub
+	adminID := userInfo.ID
 	if !s.isThisGuyIsAdminReally(adminID) {
 		adminEntity := &entities.Admin{
 			ID:     adminID,
@@ -80,22 +79,17 @@ func (s *googleOAuth2Service) isThisGuyIsAdminReally(adminID string) bool {
 	return admin != nil
 }
 
-func (s *googleOAuth2Service) Callback(ctx context.Context, googleOAuth2 *oauth2.Config, code string, userInfoUrl string) (*oauth2.Token, *_oAuth2Model.UserInfo, error) {
+func (s *googleOAuth2Service) Callback(ctx context.Context, googleOAuth2 *oauth2.Config, code string) (*oauth2.Token, error) {
 	token, err := googleOAuth2.Exchange(ctx, code)
 	if err != nil {
 		s.logger.Errorf("Failed to player exchange code: %s", err.Error())
-		return nil, nil, &exception.Unauthorized{}
+		return nil, &exception.Unauthorized{}
 	}
-	client := googleOAuth2.Client(ctx, token)
-	userInfo, err := s.getUserInfo(client, userInfoUrl)
-	if err != nil {
-		s.logger.Errorf("Error getting user info: %s", err.Error())
-		return nil, nil, &exception.Unauthorized{}
-	}
-	return token, userInfo, nil
+	return token, nil
 }
 
-func (s *googleOAuth2Service) getUserInfo(client *http.Client, userInfoUrl string) (*_oAuth2Model.UserInfo, error) {
+func (s *googleOAuth2Service) GetUserInfo(ctx context.Context, googleOAuth2 *oauth2.Config, token *oauth2.Token, userInfoUrl string) (*_oAuth2Model.UserInfo, error) {
+	client := googleOAuth2.Client(ctx, token)
 	resp, err := client.Get(userInfoUrl)
 	if err != nil {
 		return nil, err
@@ -106,10 +100,32 @@ func (s *googleOAuth2Service) getUserInfo(client *http.Client, userInfoUrl strin
 	if err != nil {
 		return nil, err
 	}
-	s.logger.Info("Body =>", string(userInfoBytes))
 	userInfo := new(_oAuth2Model.UserInfo)
 	if err := json.Unmarshal(userInfoBytes, userInfo); err != nil {
 		return nil, err
 	}
 	return userInfo, nil
+}
+
+func (s *googleOAuth2Service) RefreshToken(ctx context.Context, googleOAuth2 *oauth2.Config, token *oauth2.Token) (*oauth2.Token, error) {
+	updateToken, err := googleOAuth2.TokenSource(ctx, token).Token()
+	if err != nil {
+		return nil, &exception.Unauthorized{}
+	}
+	return updateToken, nil
+}
+
+func (s *googleOAuth2Service) IsThisGuyIsReallyPlayer(playerID string) bool {
+	playerEntity, err := s.playerRepository.FindByID(playerID)
+	if err != nil {
+		return err == nil
+	}
+	return playerEntity.ID == playerID
+}
+func (s *googleOAuth2Service) IsThisGuyIsReallyAdmin(adminID string) bool {
+	adminEntity, err := s.adminRepository.FindByID(adminID)
+	if err != nil {
+		return err == nil
+	}
+	return adminEntity.ID == adminID
 }
