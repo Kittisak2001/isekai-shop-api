@@ -3,7 +3,6 @@ package controllers
 import (
 	"net/http"
 	"strconv"
-
 	"github.com/Kittisak2001/isekai-shop-api/pkg/custom"
 	"github.com/Kittisak2001/isekai-shop-api/pkg/itemManaging/exception"
 	"github.com/Kittisak2001/isekai-shop-api/pkg/itemManaging/model"
@@ -22,10 +21,15 @@ func NewItemManagingController(itemManagingService _itemManagingService.ItemMana
 }
 
 func (c *itemManagingController) Creating(pctx echo.Context) error {
+	adminID, ok := pctx.Get("adminID").(string)
+	if !ok || adminID == "" {
+		return custom.Error(pctx, http.StatusBadRequest, &exception.AdminNotFound{})
+	}
 	itemCreatingReq := new(model.ItemCreatingReq)
 	if err := custom.NewEchoRequest(pctx).Bind(itemCreatingReq); err != nil {
 		return custom.Error(pctx, http.StatusBadRequest, err)
 	}
+	itemCreatingReq.AdminID = adminID
 	item, err := c.itemManagingService.Creating(itemCreatingReq)
 	if err != nil {
 		return custom.Error(pctx, http.StatusInternalServerError, err)
@@ -34,6 +38,10 @@ func (c *itemManagingController) Creating(pctx echo.Context) error {
 }
 
 func (c *itemManagingController) Editing(pctx echo.Context) error {
+	adminID, ok := pctx.Get("adminID").(string)
+	if !ok || adminID == "" {
+		return custom.Error(pctx, http.StatusNotFound, &exception.AdminNotFound{})
+	}
 	itemID, err := c.getItemID(pctx)
 	if err != nil {
 		return custom.Error(pctx, http.StatusBadRequest, err)
@@ -42,6 +50,7 @@ func (c *itemManagingController) Editing(pctx echo.Context) error {
 	if err := custom.NewEchoRequest(pctx).Bind(itemEditingReq); err != nil {
 		return custom.Error(pctx, http.StatusBadRequest, err)
 	}
+	itemEditingReq.AdminID = adminID
 	item, err := c.itemManagingService.Editing(itemID, itemEditingReq)
 	if err != nil {
 		exception := &exception.ItemNotfound{ItemID: *itemID}

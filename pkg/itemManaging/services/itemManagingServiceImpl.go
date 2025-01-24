@@ -22,12 +22,12 @@ func NewItemManagingService(itemManagingRepository _itemManagingRepository.ItemM
 	return &itemManagingService{itemManagingRepository, itemShopRepository, logger}
 }
 
-func (s *itemManagingService) Creating(itemCreatingModel *model.ItemCreatingReq) (*_itemShopModel.Item, error) {
+func (s *itemManagingService) Creating(itemCreatingReq *model.ItemCreatingReq) (*_itemShopModel.Item, error) {
 	itemEntity := &entities.Item{
-		Name:        itemCreatingModel.Name,
-		Description: itemCreatingModel.Description,
-		Picture:     itemCreatingModel.Picture,
-		Price:       itemCreatingModel.Price,
+		Name:        itemCreatingReq.Name,
+		Description: itemCreatingReq.Description,
+		Picture:     itemCreatingReq.Picture,
+		Price:       itemCreatingReq.Price,
 	}
 	if err := s.itemManagingRepository.Creating(itemEntity); err != nil {
 		s.logger.Errorf("Failed to creating item : %s", err.Error())
