@@ -119,12 +119,12 @@ func (s *googleOAuth2Service) IsThisGuyIsReallyPlayer(playerID string) bool {
 	if err != nil {
 		return err == nil
 	}
-	return playerEntity.ID == playerID
+	return playerEntity != nil && playerEntity.ID == playerID
 }
 func (s *googleOAuth2Service) IsThisGuyIsReallyAdmin(adminID string) bool {
 	adminEntity, err := s.adminRepository.FindByID(adminID)
 	if err != nil {
 		return err == nil
 	}
-	return adminEntity.ID == adminID
+	return adminEntity != nil && adminEntity.ID == adminID
 }
