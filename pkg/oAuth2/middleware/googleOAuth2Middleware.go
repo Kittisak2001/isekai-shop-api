@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 	"github.com/Kittisak2001/isekai-shop-api/config"
 	"github.com/Kittisak2001/isekai-shop-api/pkg/custom"
@@ -33,15 +34,16 @@ func (m *oAuth2MiddlewareImpl) PlayerGoogleAuthorizing(next echo.HandlerFunc) ec
 			}
 			m.setSameSiteCookie(pctx, config.AccessTokenCookieName, tokenSource.AccessToken)
 			m.setSameSiteCookie(pctx, config.RefreshTokenCookieName, tokenSource.RefreshToken)
-			userInfo, err := m.oAuth2Service.GetUserInfo(ctx, config.PlayerGoogleOAuth2, tokenSource, m.oAuth2Conf.UserInfoUrl)
-			if err != nil {
-				return custom.Error(pctx, http.StatusUnauthorized, err)
-			}
-			if !m.oAuth2Service.IsThisGuyIsReallyPlayer(userInfo.ID) {
-				return custom.Error(pctx, http.StatusUnauthorized, &exception.Unauthorized{})
-			}
-			pctx.Set("playerID", userInfo.ID)
 		}
+		userInfo, err := m.oAuth2Service.GetUserInfo(ctx, config.PlayerGoogleOAuth2, tokenSource, m.oAuth2Conf.UserInfoUrl)
+		if err != nil {
+			return custom.Error(pctx, http.StatusUnauthorized, err)
+		}
+		fmt.Println(userInfo.ID)
+		if !m.oAuth2Service.IsThisGuyIsReallyPlayer(userInfo.ID) {
+			return custom.Error(pctx, http.StatusUnauthorized, &exception.Unauthorized{})
+		}
+		pctx.Set("playerID", userInfo.ID)
 		return next(pctx)
 	}
 }
@@ -60,32 +62,17 @@ func (m *oAuth2MiddlewareImpl) AdminGoogleAuthorizing(next echo.HandlerFunc) ech
 			}
 			m.setSameSiteCookie(pctx, config.AccessTokenCookieName, tokenSource.AccessToken)
 			m.setSameSiteCookie(pctx, config.RefreshTokenCookieName, tokenSource.RefreshToken)
-			userInfo, err := m.oAuth2Service.GetUserInfo(ctx, config.PlayerGoogleOAuth2, tokenSource, m.oAuth2Conf.UserInfoUrl)
-			if err != nil {
-				return custom.Error(pctx, http.StatusUnauthorized, err)
-			}
-			if !m.oAuth2Service.IsThisGuyIsReallyAdmin(userInfo.ID) {
-				return custom.Error(pctx, http.StatusUnauthorized, &exception.Unauthorized{})
-			}
-			pctx.Set("adminID", userInfo.ID)
 		}
+		userInfo, err := m.oAuth2Service.GetUserInfo(ctx, config.PlayerGoogleOAuth2, tokenSource, m.oAuth2Conf.UserInfoUrl)
+		if err != nil {
+			return custom.Error(pctx, http.StatusUnauthorized, err)
+		}
+		if !m.oAuth2Service.IsThisGuyIsReallyAdmin(userInfo.ID) {
+			return custom.Error(pctx, http.StatusUnauthorized, &exception.Unauthorized{})
+		}
+		pctx.Set("adminID", userInfo.ID)
 		return next(pctx)
 	}
-}
-
-func (m *oAuth2MiddlewareImpl) RefreshingToken(pctx echo.Context, token *oauth2.Token) (*oauth2.Token, error) {
-	panic("not yet")
-}
-
-func (m *oAuth2MiddlewareImpl) adminTokenRefreshing(pctx echo.Context, token *oauth2.Token) (*oauth2.Token, error) {
-	ctx := pctx.Request().Context()
-	updateToken, err := config.AdminGoogleOAuth2.TokenSource(ctx, token).Token()
-	if err != nil {
-		return nil, &exception.Unauthorized{}
-	}
-	m.setSameSiteCookie(pctx, config.AccessTokenCookieName, updateToken.AccessToken)
-	m.setSameSiteCookie(pctx, config.RefreshTokenCookieName, updateToken.RefreshToken)
-	return updateToken, nil
 }
 
 func (m *oAuth2MiddlewareImpl) getTokenSource(pctx echo.Context) (*oauth2.Token, error) {
