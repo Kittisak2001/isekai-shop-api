@@ -26,5 +26,5 @@ func (r *playerRepositoryImpl) FindByID(playerID string) (*entities.Player, erro
 	if err := r.db.Connect().Where("id = ?", playerID).Take(playerEntity).Error; err != nil {
 		return nil, err
 	}
-	return nil, nil
+	return playerEntity, nil
 }
