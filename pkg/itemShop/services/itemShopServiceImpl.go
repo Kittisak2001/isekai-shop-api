@@ -31,8 +31,12 @@ func (s *itemShopServiceImpl) Listing(itemFilter *_itemShopModel.ItemFilter) (*_
 		s.logger.Errorf("Failed to list item or counting: %s", err.Error())
 		return nil, &_itemShopException.ItemListing{}
 	}
-	itemCounting := int64(len(itemEntityList))
-	totalPage := s.totalPageCalculation(&itemCounting, itemFilter.Size)
+	itemCounting, err := s.itemShopRepository.Counting(itemFilter)
+	if err != nil {
+		s.logger.Errorf("Failed to counting item or counting: %s", err.Error())
+		return nil, &_itemShopException.ItemListing{}
+	}
+	totalPage := s.totalPageCalculation(itemCounting, itemFilter.Size)
 	return s.toItemResultResponse(itemEntityList, itemFilter.Page, totalPage), err
 }
 
