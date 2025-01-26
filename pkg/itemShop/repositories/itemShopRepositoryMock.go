@@ -49,3 +49,8 @@ func (m *itemShopRepositoryMock) PurchaseHistoryRecording(tx *gorm.DB, purchasin
 	args := m.Called(tx, purchasingEntity)
 	return args.Get(0).(*entities.PurchaseHistory), args.Error(1)
 }
+
+func (m *itemShopRepositoryMock) Counting(itemFilter *_itemShopModel.ItemFilter) (*int64, error) {
+	args := m.Called(itemFilter)
+	return args.Get(0).(*int64), args.Error(1)
+}
