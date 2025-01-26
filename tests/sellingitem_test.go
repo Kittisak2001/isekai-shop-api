@@ -2,7 +2,6 @@ package tests
 
 import (
 	"testing"
-
 	"github.com/Kittisak2001/isekai-shop-api/entities"
 	_inventoryRepository "github.com/Kittisak2001/isekai-shop-api/pkg/inventory/repositories"
 	_itemShopModel "github.com/Kittisak2001/isekai-shop-api/pkg/itemShop/model"
