@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/Kittisak2001/isekai-shop-api/databases"
 	"github.com/Kittisak2001/isekai-shop-api/entities"
+	"gorm.io/gorm"
 )
 
 type playerCoinRepositoryImpl struct {
@@ -13,8 +14,12 @@ func NewPlayerCoinRepositoryImpl(db databases.Database) PlayerCoinRepository {
 	return &playerCoinRepositoryImpl{db}
 }
 
-func (r *playerCoinRepositoryImpl) CoinAdding(playerCoinEntity *entities.PlayerCoin) (*entities.PlayerCoin, error) {
-	if err := r.db.Connect().Create(playerCoinEntity).Error; err != nil {
+func (r *playerCoinRepositoryImpl) CoinAdding(tx *gorm.DB,playerCoinEntity *entities.PlayerCoin) (*entities.PlayerCoin, error) {
+	conn := r.db.Connect()
+	if tx != nil{
+		conn = tx
+	}
+	if err := conn.Model(&entities.PlayerCoin{}).Create(playerCoinEntity).Error; err != nil {
 		return nil, err
 	}
 	return playerCoinEntity, nil
