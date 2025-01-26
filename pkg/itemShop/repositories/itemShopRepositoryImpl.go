@@ -34,6 +34,23 @@ func (r *itemShopRepositoryImpl) Listing(itemFilter *_itemShopModel.ItemFilter) 
 	return itemList, nil
 }
 
+func (r *itemShopRepositoryImpl) Counting(itemFilter *_itemShopModel.ItemFilter) (*int64, error) {
+	query := r.db.Connect().Model(&entities.Item{}).Where("is_archive = ?", false) // SELECT * FROM items
+	name := itemFilter.Name
+	if name != "" {
+		query = query.Where("name like ?", "%"+name+"%") // WHERE name LIKE %..%
+	}
+	description := itemFilter.Description
+	if description != "" {
+		query = query.Where("description like ?", "%"+description+"%") // WHERE description LIKE %..%
+	}
+	count := new(int64)
+	if err := query.Count(count).Error; err != nil {
+		return nil, err
+	}
+	return count, nil
+}
+
 func (r *itemShopRepositoryImpl) FindById(itemID *uint64) (*entities.Item, error) {
 	itemEntity := new(entities.Item)
 	if err := r.db.Connect().Where("id = ?", itemID).Take(itemEntity).Error; err != nil {
