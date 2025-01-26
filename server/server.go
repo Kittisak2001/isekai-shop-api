@@ -57,10 +57,11 @@ func (s *echoServer) Start() {
 		panic("panic")
 	})
 
-	s.initItemShopRouter()
+	s.initItemShopRouter(oAuth2Middleware)
 	s.initItemManagingRouter(oAuth2Middleware)
 	s.initOAuth2Router()
 	s.initPlayerCoinRouter(oAuth2Middleware)
+	s.initInventoryRouter(oAuth2Middleware)
 	
 	quitCh := make(chan os.Signal, 1)
 	signal.Notify(quitCh, syscall.SIGINT, syscall.SIGTERM)

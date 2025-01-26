@@ -11,7 +11,7 @@ type (
 		PlayerID  string    `gorm:"type:varchar(64);not null;"`
 		Amount    int64     `gorm:"not null;"`
 		CreatedAt time.Time `gorm:"not null;autoCreateTime;"`
-		Coin      int64     `json:"coin"`
+		Coin      int64     `gorm:"->" json:"coin"`
 	}
 )
 
