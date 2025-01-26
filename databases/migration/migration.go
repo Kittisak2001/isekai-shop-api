@@ -14,15 +14,15 @@ func main() {
 	tx := db.Connect().Begin()
 	defer tx.Rollback()
 
-	if err := tx.Debug().AutoMigrate(&entities.Item{}); err != nil {
-		panic(err)
-	}
-	// playerCoinMigration(tx)
-	// inventoryMigration(tx)
-	// purchaseHistoryMigration(tx)
-	// playerMigration(tx)
-	// adminMigration(tx)
-	// itemMigration(tx)
+	// if err := tx.Debug().AutoMigrate(&entities.Item{}); err != nil {
+	// 	panic(err)
+	// }
+	playerCoinMigration(tx)
+	inventoryMigration(tx)
+	purchaseHistoryMigration(tx)
+	playerMigration(tx)
+	adminMigration(tx)
+	itemMigration(tx)
 	if err := tx.Commit().Error; err != nil {
 		panic(err)
 	}
