@@ -17,3 +17,10 @@ var (
 
 	Letters = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 )
+
+type BuyingStatus bool
+
+var (
+	Buying  BuyingStatus = true
+	Selling BuyingStatus = false
+)
