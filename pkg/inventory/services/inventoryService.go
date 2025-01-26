@@ -1,6 +1,7 @@
 package services
 
-type InventoryService interface{
-	AddItem()
-	RemoveItem()
+import "github.com/Kittisak2001/isekai-shop-api/pkg/inventory/model"
+
+type InventoryService interface {
+	Listing(playerID string) ([]*model.Inventory, error)
 }
